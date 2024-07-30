@@ -12,7 +12,7 @@ export const createToken = (id: string, email: string) => {
 }
 
 interface CustomRequest extends Request {
-    userId?: any;
+    userId?: string;
   }
 
 export const verifyToken = async (
@@ -20,7 +20,8 @@ export const verifyToken = async (
     res: Response,
     next: NextFunction
   ) => {
-    const token = req.signedCookies["auth-token"];
+    const token = req.cookies?.token;
+    console.log(token);
     if (!token ) {
       return res.status(401).send({ message: "Token Not Received" });
     }

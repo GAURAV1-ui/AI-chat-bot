@@ -8,8 +8,6 @@ export const userRegister = async(req: Request, res: Response, next: NextFunctio
     try {
         const {name, email, password} = req.body;
 
-        console.log(password);
-
         const existingUser = await User.findOne({email});
 
         if(existingUser){
@@ -51,7 +49,7 @@ export const userLogin = async(
     }
 
     const token = createToken(user._id.toString(), user.email);
-    res.cookie("auth-token", token);
+    res.cookie("token", token);
     return res
     .status(200)
     .json({ name: user.name, email: user.email,token: token });

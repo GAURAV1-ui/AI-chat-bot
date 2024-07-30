@@ -1,6 +1,7 @@
 import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import cors from 'cors';
+import cookieParser from "cookie-parser";
 import { connectDb } from "./db";
 
 import chatRoutes from './routes/chat.router';
@@ -11,8 +12,10 @@ dotenv.config();
 const app: Express = express();
 
 const port = process.env.PORT || 8000;
+
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(express.json());
+app.use(cookieParser());
 
 app.use("", chatRoutes);
 app.use("", authRoutes);
