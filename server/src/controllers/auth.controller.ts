@@ -3,6 +3,10 @@ import User from '../models/auth.model';
 import { hash, compare } from "bcrypt";
 import { createToken } from "../utils/createToken";
 
+interface CustomRequest extends Request {
+    userId?: string;
+  }
+
 export const userRegister = async(req: Request, res: Response, next: NextFunction) => {
     
     try {
@@ -48,6 +52,8 @@ export const userLogin = async(
       return res.status(401).send("Incorrect Password");
     }
 
+    res.clearCookie("token");
+
     const token = createToken(user._id.toString(), user.email);
     res.cookie("token", token);
     return res
@@ -58,3 +64,26 @@ export const userLogin = async(
         return res.status(200).json({message: "User not loggedin"});
     }
 }
+
+export const userLogout = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+
+      const user = await User.findById((req as CustomRequest).userId);
+      if (!user) {
+        return res.status(401).send("User not registered OR Token malfunctioned");
+      }
+  
+      res.clearCookie("token");
+  
+      return res
+        .status(200)
+        .json({ message: "OK"});
+    } catch (error) {
+      console.log(error);
+      return res.status(200).json({message: "Something went wrong"});
+    }
+  };
